@@ -71,9 +71,9 @@ function askTemplate(text){
 function handleMessage(sender_psid, received_message) {
     let response;
     console.log('8080!')
-    if(received_message.attachment){
+    if(received_message.attachments){
         console.log('attachment!')
-        if(received_message.attachment[0].type === "image"){
+        if(received_message.attachments[0].type === "image"){
             response = { text: "Je ne sais pas traiter ce type de demande" };
             callSendAPI(sender_psid, response);
         } 
