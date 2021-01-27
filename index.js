@@ -2,15 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const request = require('request');
-
+const processPostback = require('../processes/postback');
+const processMessage = require('../processes/messages');
 
 const app = express();
 
 
 app.set('port', (process.env.PORT || 3000));// 
 app.use(morgan('dev')); // log every request to the console.
-
-
 
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
@@ -34,9 +33,9 @@ app.post('/msgbot', function(req, res) {
           console.log(event);
           const sender = event.sender.id;
           if (event.postback){
-             processPostback(event);
+             //processPostback(event);
           } else if (event.message){
-             processMessage(event);
+             //processMessage(event);
              sendTextMessage(sender, text + "!");
 
           }
