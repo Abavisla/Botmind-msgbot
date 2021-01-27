@@ -156,7 +156,7 @@ function handlePostback(sender_psid, received_postback) {
 }
 
 // Sends response messages via the Send API
-function callSendAPI(sender_psid, response, resolve = null) {
+function callSendAPI(sender_psid, response) {
     // Construct the message body
 
     // Send the HTTP request to the Messenger Platform
@@ -172,8 +172,6 @@ function callSendAPI(sender_psid, response, resolve = null) {
       if (error) {
           console.log("Error sending message: " + response.error);
       reject(response.error);
-      } else {
-         resolve(body);
       }
  });
 }
