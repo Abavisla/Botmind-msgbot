@@ -22,15 +22,9 @@ app.post('/webhook', (req, res) => {
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
 
-        // Iterates over each entry - there may be multiple if batched
         body.entry.forEach(function(entry) {
-
-            // Gets the message. entry.messaging is an array, but
-            // will only ever contain one message, so we get index 0
             let webhook_event = entry.messaging[0];
             console.log(webhook_event);
-
-            // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
             console.log('Sender PSID: ' + sender_psid);
 
@@ -181,7 +175,7 @@ function callSendAPI(sender_psid, response, cb = null) {
     // Send the HTTP request to the Messenger Platform
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": config.get('facebook.page.access_token') },
+        "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN},
         "method": "POST",
         "json": request_body
     }, (err, res, body) => {
