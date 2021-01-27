@@ -76,10 +76,13 @@ function askTemplate(text){
 function handleMessage(sender_psid, received_message) {
     let response;
     if(received_message.attachment){
-        let attachment = received_message.attachments[0]
+
+        let attachment = received_message.attachments.forEach(function(attachment){
         if (attachment.type === "image") {
             response = { text: "Je ne sais pas traiter ce type de demande" };
+            callSendAPI(sender_psid, response);
         } 
+        })
     }
     else if (received_message.text === "Comment vas-tu ?") {
         response = askTemplate("Très bien et vous ?");
