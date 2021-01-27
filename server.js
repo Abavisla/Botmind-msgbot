@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();// app configuration
 
 
-app.set('port', (process.env.PORT || 3000));// setup our express application
+app.set('port', (process.env.PORT || 8000));// setup our express application
 pp.use(morgan('dev')); // log every request to the console.
 
 app.use(bodyParser.urlencoded({ extended:false }));
