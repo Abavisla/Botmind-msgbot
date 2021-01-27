@@ -10,7 +10,6 @@ app.use(bodyParser.json());
 
 app.set('port', (process.env.PORT || 8080));
 
-
 app.get('/', (req, res) => res.send('Hello World!'));
 
 
@@ -27,17 +26,12 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', function(req, res) {
   //checking for page subscription.
   if (req.body.object === 'page'){
-     
-     /* Iterate over each entry, there can be multiple entries 
-     if callbacks are batched. */       req.body.entry.forEach(function(entry) {
-     // Iterate over each messaging event
+    req.body.entry.forEach(function(entry) {
         entry.messaging.forEach(function(event) {
           let sender_psid = event.sender.id;
           console.log('Sender PSID: ' + sender_psid);
           if (event.message) {
               handleMessage(sender_psid, event.message);
-          } else if (event.postback) {
-              handlePostback(sender_psid, event.postback);
           }
         console.log(event);
     });
@@ -49,6 +43,7 @@ app.post('/webhook', function(req, res) {
 // Adds support for GET requests to our webhook
 
 app.listen(app.get('port'), () => console.log('Example app listening on port 8080!'));
+
 
 function askTemplate(text){
     return {
@@ -75,47 +70,23 @@ function askTemplate(text){
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
+    console.log('8080!')
     if(received_message.attachment){
-
-        let attachment = received_message.attachments.forEach(function(attachment){
-        if (attachment.type === "image") {
+        console.log('8080!')
+        if(atts[0].type === "image"){
             response = { text: "Je ne sais pas traiter ce type de demande" };
             callSendAPI(sender_psid, response);
         } 
-        })
     }
     else if (received_message.text === "Comment vas-tu ?") {
+        console.log('8080!')
+
         response = askTemplate("Très bien et vous ?");
     } else{
+        console.log('8080!')
         response = { text: received_message.text };
     }
     callSendAPI(sender_psid, response);
-}
-
-
-
-function handlePostback(sender_psid, received_postback) {
-    let response;
-
-    // Get the payload for the postback
-    let payload = received_postback.payload;
-
-    // Set the response based on the postback payload
-    // if (payload === 'CAT_PICS') {
-    //     response = imageTemplate('cats', sender_psid);
-    //     callSendAPI(sender_psid, response, function(){
-    //         callSendAPI(sender_psid, askTemplate('Show me more'));
-    //     });
-    // } else if (payload === 'DOG_PICS') {
-    //     response = imageTemplate('dogs', sender_psid);
-    //     callSendAPI(sender_psid, response, function(){
-    //         callSendAPI(sender_psid, askTemplate('Show me more'));
-    //     });
-    // } else if(payload === 'WELCOME'){
-    //     response = askTemplate('Are you a Cat or Dog Person?');
-    //     callSendAPI(sender_psid, response);
-    // }
-    // Send the message to acknowledge the postback
 }
 
 // Sends response messages via the Send API
