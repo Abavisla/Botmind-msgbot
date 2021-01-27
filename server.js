@@ -90,12 +90,12 @@ function askTemplate(text){
                 "buttons":[
                     {
                         "type":"postback",
-                        "title":"Cats",
+                        "title":"Je vais bien, merci",
                         "payload":"CAT_PICS"
                     },
                     {
                         "type":"postback",
-                        "title":"Dogs",
+                        "title":"Non, ça ne va pas",
                         "payload":"DOG_PICS"
                     }
                 ]
@@ -121,15 +121,17 @@ function handleMessage(sender_psid, received_message) {
     let response;
 
     // Check if the message contains text
-    if (received_message.text) {
-        var messageData = {
+    if (received_message.text === "Comment vas-tu ?") {
+        response = askTemplate("Très bien et vous ?");
+
+
+        response = {
             text: received_message.text
         };
         callSendAPI(sender_psid, messageData)
 
 
         // Create the payload for a basic text message
-        response = askTemplate();
     }
 
     // Sends the response message
