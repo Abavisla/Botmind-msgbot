@@ -1,9 +1,8 @@
 'use strict';
-let express = require('express'),
-    bodyParser = require('body-parser'),
-    app = express(),
-    request = require('request'),
-    images = require('./pics');
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
+const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
