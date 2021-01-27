@@ -14,7 +14,7 @@ app.use(morgan('dev')); // log every request to the console.
 app.use(bodyParser.urlencoded({ extended:false }));
 app.use(bodyParser.json());
 
-app.get('/msgbot/', function (req, res) {
+app.get('/msgbot', function (req, res) {
 	if (req.query['hub.verify_token'] === 'EAAPTsUnoxzQBANSgosW7FhNPkEKlFsZA2VcSQd2ZCtlSdbyRxIa2Q4ytuKL0h7AHtZCoFs80TpladRIE2aOmwDrfaWGA3HGguj7MjWmzHXEPPtn2ZA96PidmWYZBNmcBzsn1ANnWZA82p317GFVRhGqQMNRMWM8BzSwAMRrqPG3QZDZD') {
 		res.status(200).send(req.query['hub.challenge']);
 	}
@@ -22,7 +22,7 @@ app.get('/msgbot/', function (req, res) {
 	res.sendStatus(403);
 });
  
-app.post('/msgbot/', function(req, res) {
+app.post('/msgbot', function(req, res) {
     //checking for page subscription.
     if (req.body.object === 'page'){
        
