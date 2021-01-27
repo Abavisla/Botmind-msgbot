@@ -11,30 +11,25 @@ module.exports = function processMessage(event) {
         if (message.text) {
             // now we will take the text recieved and send it to an food tracking API.
             let text = message.text;
-            var request = require("request");
 
-            let options = {
+            request({
+                url: 'https://graph.facebook.com/v2.6/me/messages',
+                qs: {
+                    access_token: token
+                },
                 method: 'POST',
-                url: 'https://mefit-preprod.herokuapp.com/api/getnutritionvalue',
-                headers:
-                {
-                    'cache-control': 'no-cache',
-                    'content-type': 'application/json'
-                },
-                body:
-                {
-                    userID: process.env.USERID,
-                    searchTerm: text
-                },
-                json: true
-            };
-
-            request(options, function (error, response, body) {
-                if (error) throw new Error(error);
-                senderAction(senderID);
-                // after the response is recieved we will send the details in a Generic template
-                sendGenericTemplate(senderID, body);
+                json: {
+                    recipient: {
+                        id: sender
+                    },
+                    message: text,
+                }
+            }, function(error, response, body) {
+                if (error) {
+                    console.log('Error:', error);
+                } else if (response.body.error) {
+                    console.log('Error: ', response.body.error);
+                }
             });
-
         }
     }
