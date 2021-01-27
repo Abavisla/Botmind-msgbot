@@ -50,36 +50,6 @@ app.post('/webhook', function(req, res) {
 
 app.listen(app.get('port'), () => console.log('Example app listening on port 8080!'));
 
-
-function getImage(type, sender_id){
-    // create user if doesn't exist
-    if(users[sender_id] === undefined){
-        users = Object.assign({
-            [sender_id] : {
-                'cats_count' : 0,
-                'dogs_count' : 0
-            }
-        }, users);
-    }
-
-    let count = images[type].length, // total available images by type
-        user = users[sender_id], // // user requesting image
-        user_type_count = user[type+'_count'];
-
-
-    // update user before returning image
-    let updated_user = {
-        [sender_id] : Object.assign(user, {
-            [type+'_count'] : count === user_type_count + 1 ? 0 : user_type_count + 1
-        })
-    };
-    // update users
-    users = Object.assign(users, updated_user);
-
-    console.log(users);
-    return images[type][user_type_count];
-}
-
 function askTemplate(text){
     return {
         "attachment":{
@@ -91,26 +61,12 @@ function askTemplate(text){
                     {
                         "type":"postback",
                         "title":"Je vais bien, merci",
-                        "payload":"CAT_PICS"
                     },
                     {
                         "type":"postback",
                         "title":"Non, ça ne va pas",
-                        "payload":"DOG_PICS"
                     }
                 ]
-            }
-        }
-    }
-}
-
-function imageTemplate(type, sender_id){
-    return {
-        "attachment":{
-            "type":"image",
-            "payload":{
-                "url": getImage(type, sender_id),
-                "is_reusable":true
             }
         }
     }
@@ -119,23 +75,17 @@ function imageTemplate(type, sender_id){
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
-
-    // Check if the message contains text
-    console.log("TEST111 " + received_message.text)
-    if (received_message.text === "Comment vas-tu ?") {
-        response = askTemplate("Très bien et vous ?");
-
-
-
-
-        // Create the payload for a basic text message
+    if(received_message.attachment){
+        let attachment = received_message.attachments[0]
+        if (attachment.type === "image") {
+            response = { text: "Je ne sais pas traiter ce type de demande" };
+        } 
     }
-    var messageData = {
-            text: received_message.text
-        };
-
-        callSendAPI(sender_psid, messageData)
-    // Sends the response message
+    else if (received_message.text === "Comment vas-tu ?") {
+        response = askTemplate("Très bien et vous ?");
+    } else{
+        response = { text: received_message.text };
+    }
     callSendAPI(sender_psid, response);
 }
 
@@ -148,20 +98,20 @@ function handlePostback(sender_psid, received_postback) {
     let payload = received_postback.payload;
 
     // Set the response based on the postback payload
-    if (payload === 'CAT_PICS') {
-        response = imageTemplate('cats', sender_psid);
-        callSendAPI(sender_psid, response, function(){
-            callSendAPI(sender_psid, askTemplate('Show me more'));
-        });
-    } else if (payload === 'DOG_PICS') {
-        response = imageTemplate('dogs', sender_psid);
-        callSendAPI(sender_psid, response, function(){
-            callSendAPI(sender_psid, askTemplate('Show me more'));
-        });
-    } else if(payload === 'WELCOME'){
-        response = askTemplate('Are you a Cat or Dog Person?');
-        callSendAPI(sender_psid, response);
-    }
+    // if (payload === 'CAT_PICS') {
+    //     response = imageTemplate('cats', sender_psid);
+    //     callSendAPI(sender_psid, response, function(){
+    //         callSendAPI(sender_psid, askTemplate('Show me more'));
+    //     });
+    // } else if (payload === 'DOG_PICS') {
+    //     response = imageTemplate('dogs', sender_psid);
+    //     callSendAPI(sender_psid, response, function(){
+    //         callSendAPI(sender_psid, askTemplate('Show me more'));
+    //     });
+    // } else if(payload === 'WELCOME'){
+    //     response = askTemplate('Are you a Cat or Dog Person?');
+    //     callSendAPI(sender_psid, response);
+    // }
     // Send the message to acknowledge the postback
 }
 
