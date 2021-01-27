@@ -121,19 +121,20 @@ function handleMessage(sender_psid, received_message) {
     let response;
 
     // Check if the message contains text
+    console.log("TEST111 " + received_message.text)
     if (received_message.text === "Comment vas-tu ?") {
         response = askTemplate("Très bien et vous ?");
 
 
-        response = {
-            text: received_message.text
-        };
-        callSendAPI(sender_psid, messageData)
 
 
         // Create the payload for a basic text message
     }
+    var messageData = {
+            text: received_message.text
+        };
 
+        callSendAPI(sender_psid, messageData)
     // Sends the response message
     callSendAPI(sender_psid, response);
 }
