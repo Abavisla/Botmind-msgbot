@@ -14,7 +14,6 @@ app.listen(8080, () => console.log('Example app listening on port 8989!'));
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
-
 app.post('/webhook', function(req, res) {
   //checking for page subscription.
   if (req.body.object === 'page'){
