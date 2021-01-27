@@ -122,6 +122,11 @@ function handleMessage(sender_psid, received_message) {
 
     // Check if the message contains text
     if (received_message.text) {
+        var messageData = {
+            text: received_message.text
+        };
+        callSendAPI(sender_psid, messageData)
+
 
         // Create the payload for a basic text message
         response = askTemplate();
@@ -130,6 +135,8 @@ function handleMessage(sender_psid, received_message) {
     // Sends the response message
     callSendAPI(sender_psid, response);
 }
+
+
 
 function handlePostback(sender_psid, received_postback) {
     let response;
