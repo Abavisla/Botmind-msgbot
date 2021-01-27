@@ -4,7 +4,6 @@ const sendMessage = require('../templates/sendMessage');
 const sendGenericTemplate = require('../templates/sendGenericTemplate');
 
 module.exports = function processMessage(event) {
-    if (!event.message.is_echo) {
         const message = event.message;
         const senderID = event.sender.id;
         console.log("Received message from senderId: " + senderID);
@@ -39,4 +38,3 @@ module.exports = function processMessage(event) {
 
         }
     }
-}

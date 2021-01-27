@@ -36,5 +36,29 @@ const sendMessage = require('../templates/sendMessage');
                 });
             });
         });
+     }else{
+        request({
+            url: "https://graph.facebook.com/v2.6/" + senderID,
+            qs: {
+                access_token: process.env.PAGE_ACCESS_TOKEN,
+                fields: "first_name"
+            },
+            method: "GET"
+        }, function(error, response, body) {
+            let greeting = '';
+            if (error) {
+                console.error("Error getting user name: " + error);
+            } else {
+                let bodyObject = JSON.parse(body);
+                console.log(bodyObject);
+                name = bodyObject.first_name;
+                greeting = "Hello " + name  + ". ";
+            }
+            let message = greeting + "Welcome to Healthbot. Hope you are doing good today";
+            senderAction(senderID);
+            sendMessage(senderID, {text: message}).then(() => {
+            });
+        });
+
      }
  }
