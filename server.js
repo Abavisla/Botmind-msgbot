@@ -1,18 +1,28 @@
 'use strict';
-let express = require('express'),
-    bodyParser = require('body-parser'),
-    app = express(),
-    request = require('request'),
-    images = require('./pics');
+const express = require('express')
+const bodyParser = require('body-parser'),
+const app = express(),
+const request = require('request'),
+var images = require('./pics');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-let users = {};
+app.set('port', (process.env.PORT || 8080));
 
-app.listen(8080, () => console.log('Example app listening on port 8989!'));
 
 app.get('/', (req, res) => res.send('Hello World!'));
+
+
+app.get('/webhook', (req, res) => {
+  if (req.query['hub.verify_token'] === process.env.VERIFY_TOKEN){
+    console.log('webhook verified');
+    res.status(200).send(req.query['hub.challenge']);
+ } else {
+     console.error('verification failed. Token mismatch.');
+     res.sendStatus(403);
+  }
+});
 
 app.post('/webhook', function(req, res) {
   //checking for page subscription.
@@ -37,15 +47,8 @@ app.post('/webhook', function(req, res) {
 });
 
 // Adds support for GET requests to our webhook
-app.get('/webhook', (req, res) => {
-  if (req.query['hub.verify_token'] === process.env.VERIFY_TOKEN){
-    console.log('webhook verified');
-    res.status(200).send(req.query['hub.challenge']);
- } else {
-     console.error('verification failed. Token mismatch.');
-     res.sendStatus(403);
-  }
-});
+
+app.listen(app.get('port'), () => console.log('Example app listening on port 8080!'));
 
 
 function getImage(type, sender_id){
