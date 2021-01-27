@@ -3,13 +3,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const request = require('request')
-var images = require('./pics');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.set('port', (process.env.PORT || 8080));
-
 app.get('/', (req, res) => res.send('Hello World!'));
 
 
@@ -24,12 +22,10 @@ app.get('/webhook', (req, res) => {
 });
 
 app.post('/webhook', function(req, res) {
-  //checking for page subscription.
   if (req.body.object === 'page'){
     req.body.entry.forEach(function(entry) {
         entry.messaging.forEach(function(event) {
           let sender_psid = event.sender.id;
-          console.log('Sender PSID: ' + sender_psid);
           if (event.message) {
               handleMessage(sender_psid, event.message);
           }
@@ -40,60 +36,41 @@ app.post('/webhook', function(req, res) {
  }
 });
 
-// Adds support for GET requests to our webhook
+app.listen(app.get('port'), () => console.log('listening on port 8080'));
 
-app.listen(app.get('port'), () => console.log('Example app listening on port 8080!'));
-
-
-function askTemplate(text){
-    return {
-        "attachment":{
-            "type":"template",
-            "payload":{
-                "template_type":"button",
-                "text": text,
-                "buttons":[
-                    {
-                        "type":"postback",
-                        "title":"Je vais bien, merci",
-                    },
-                    {
-                        "type":"postback",
-                        "title":"Non, ça ne va pas",
-                    }
-                ]
-            }
-        }
-    }
-}
-
-// Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
-    console.log('8080!')
     if(received_message.attachments){
-        console.log('attachment!')
         if(received_message.attachments[0].type === "image"){
             response = { text: "Je ne sais pas traiter ce type de demande" };
-            callSendAPI(sender_psid, response);
         } 
-    }
-    else if (received_message.text === "Comment vas-tu ?") {
-        console.log('8080!')
-
-        response = askTemplate("Très bien et vous ?");
-    } else{
-        console.log('8080!')
+    }else if (received_message.text === "Comment vas-tu ?") {
+        response = {
+            "attachment":{
+                "type":"template",
+                "payload":{
+                    "template_type":"button",
+                    "text": "Très bien et vous ?",
+                    "buttons":[
+                        {
+                            "type":"postback",
+                            "title":"Je vais bien, merci",
+                        },
+                        {
+                            "type":"postback",
+                            "title":"Non, ça ne va pas",
+                        }
+                    ]
+                }
+            }
+        }
+    }else{
         response = { text: received_message.text };
     }
-    callSendAPI(sender_psid, response);
+    sendToBot(sender_psid, response);
 }
 
-// Sends response messages via the Send API
-function callSendAPI(sender_psid, response) {
-    // Construct the message body
-
-    // Send the HTTP request to the Messenger Platform
+function sendToBot(sender_psid, response) {
     request({
         "uri": "https://graph.facebook.com/v2.6/me/messages",
         "qs": { "access_token": process.env.PAGE_ACCESS_TOKEN},
