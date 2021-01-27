@@ -3,7 +3,7 @@ const processMessage = require('../processes/messages');
 
 
 module.exports = function(app, chalk){
-  app.get('/webhook', function(req, res) {
+  app.get('/webhook/', function(req, res) {
     if (req.query['hub.verify_token'] === process.env.VERIFY_TOKEN){
        console.log('webhook verified');
        res.status(200).send(req.query['hub.challenge']);
@@ -13,7 +13,7 @@ module.exports = function(app, chalk){
      }
   });
   
-  app.post('/webhook', function(req, res) {
+  app.post('/webhook/', function(req, res) {
     //checking for page subscription.
     if (req.body.object === 'page'){
        
